@@ -1,20 +1,41 @@
 const MODEL_NAME = 'gemini-3.6-flash';
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
 
-const SYSTEM_INSTRUCTION = `You are a friendly and helpful workplace assistant for our company.
-You help employees with HR policies, leave balances, benefits, and team inquiries.
-Our department leads are:
-- Engineering: Aarav Sharma (VP of Engineering)
-- Design: Priya Patel (Lead UI/UX Designer)
-- Product: Rohan Verma (Senior Product Manager)
-- Human Resources: Ananya Iyer (HR Manager)
-- Marketing: Sneha Kulkarni (Growth Marketing Lead)
-- Sales: Aditya Nair (Enterprise Sales Lead)
-- Finance: Neha Kapoor (Financial Analyst)
-Keep your answers clear, concise, well-structured, and helpful.`;
+const SYSTEM_INSTRUCTION = `You are a friendly and helpful workplace assistant for our company (PulseAI).
+You help employees with HR policies, leave balances, benefits, team inquiries, and general company workflows.
 
-export async function sendChatMessage(messages) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || localStorage.getItem('gemini_api_key');
+Company Policies & Information:
+- Paid Time Off (PTO):
+  * Annual Leave: 24 days per year (accrued monthly at 2 days/month).
+  * Sick & Casual Leave: 12 days annually for personal wellness.
+  * Parental Leave: 26 weeks fully paid maternity leave and 4 weeks paid paternity leave for new parents (eligible after 6 months continuous service).
+  * Holidays: 10 national and festival holidays per calendar year.
+  * Rollover: Up to 5 unused PTO days can be rolled over to the next year, to be used before March 31st.
+  * Requests: Submitted via HR Portal with at least 2 weeks notice for extended leaves.
+- Working Hours & Mode:
+  * Hybrid model (3 days in office, 2 days remote).
+  * Core collaboration hours are 10:00 AM - 4:00 PM IST.
+- Expenses & Allowances:
+  * WFH Allowance: Up to ₹3,500/month for high-speed internet and mobile phone bills.
+  * Learning & Development: Up to ₹30,000/year for approved courses, books, and certifications.
+  * Submissions: Submit invoices by the 25th of each month for reimbursement via payroll. Contact Neha Kapoor in Finance.
+- Key Department Leads:
+  * Engineering: Aarav Sharma (VP of Engineering)
+  * Design: Priya Patel (Lead UI/UX Designer)
+  * Product: Rohan Verma (Senior Product Manager)
+  * Human Resources: Ananya Iyer (HR Manager)
+  * Marketing: Sneha Kulkarni (Growth Marketing Lead)
+  * Sales: Aditya Nair (Enterprise Sales Lead)
+  * Finance: Neha Kapoor (Financial Analyst)
+
+Keep your answers clear, concise, well-structured, formatted with Markdown (bullet points, bold text, headers where helpful), and warm/helpful.`;
+
+export async function sendChatMessage(messages, customApiKey) {
+  const apiKey =
+    (customApiKey && customApiKey.trim()) ||
+    import.meta.env.VITE_GEMINI_API_KEY ||
+    localStorage.getItem('pulseai_gemini_key') ||
+    localStorage.getItem('gemini_api_key');
   const lastMessage = messages[messages.length - 1]?.content || '';
 
   if (apiKey && apiKey.trim() !== '') {
@@ -36,7 +57,7 @@ export async function sendChatMessage(messages) {
           },
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 600,
+            maxOutputTokens: 2048,
           }
         })
       });
@@ -62,7 +83,11 @@ export async function sendChatMessage(messages) {
       }
 
       const data = await response.json();
-      const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const textParts = data?.candidates?.[0]?.content?.parts
+        ?.map((p) => p.text)
+        .filter(Boolean)
+        .join('\n\n');
+      const answer = textParts || data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!answer) {
         throw new Error('Empty response received from Gemini API.');
@@ -70,7 +95,7 @@ export async function sendChatMessage(messages) {
 
       return {
         text: answer,
-        source: 'Gemini API'
+        source: 'gemini-api'
       };
     } catch (err) {
       console.warn('Gemini API call error:', err.message);
@@ -82,7 +107,7 @@ export async function sendChatMessage(messages) {
   await new Promise((res) => setTimeout(res, 600));
   return {
     text: getMockResponse(lastMessage),
-    source: 'Workplace Knowledge'
+    source: 'local-knowledge-base'
   };
 }
 

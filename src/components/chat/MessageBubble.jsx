@@ -137,7 +137,7 @@ export default function MessageBubble({ message }) {
             <span>{message.timestamp}</span>
             {!isUser && message.source && (
               <span className="flex items-center gap-1 font-medium px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                {message.source === 'gemini-api' ? (
+                {message.source === 'gemini-api' || message.source === 'Gemini API' ? (
                   <>
                     <Sparkles className="w-2.5 h-2.5 text-indigo-500" /> Gemini API
                   </>
