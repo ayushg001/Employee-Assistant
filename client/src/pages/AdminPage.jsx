@@ -17,6 +17,7 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import { API_BASE_URL, parseResponse } from '../config/api';
 
 export default function AdminPage() {
   const { user, token, loading: authLoading } = useAuth();
@@ -43,21 +44,21 @@ export default function AdminPage() {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [contactsRes, usersRes, quotesRes] = await Promise.all([
-        fetch('/api/admin/contacts', { headers }),
-        fetch('/api/admin/users', { headers }),
-        fetch('/api/admin/quotes', { headers }),
+        fetch(`${API_BASE_URL}/api/admin/contacts`, { headers }),
+        fetch(`${API_BASE_URL}/api/admin/users`, { headers }),
+        fetch(`${API_BASE_URL}/api/admin/quotes`, { headers }),
       ]);
 
       if (contactsRes.ok) {
-        const data = await contactsRes.json();
+        const data = await parseResponse(contactsRes);
         setContacts(data.contacts || []);
       }
       if (usersRes.ok) {
-        const data = await usersRes.json();
+        const data = await parseResponse(usersRes);
         setUsers(data.users || []);
       }
       if (quotesRes.ok) {
-        const data = await quotesRes.json();
+        const data = await parseResponse(quotesRes);
         setQuotes(data.quotes || []);
       }
     } catch (err) {
@@ -82,14 +83,14 @@ export default function AdminPage() {
 
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/admin/contacts/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/contacts/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const data = await res.json();
+      const data = await parseResponse(res);
 
       if (!res.ok) {
         throw new Error(data.message || 'Failed to delete contact submission');

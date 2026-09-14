@@ -5,6 +5,7 @@ import MetricCard from '../components/analytics/MetricCard';
 import DepartmentBarChart from '../components/analytics/DepartmentBarChart';
 import StatusPieChart from '../components/analytics/StatusPieChart';
 import { KPI_METRICS as FALLBACK_KPI } from '../data/mockAnalytics';
+import { API_BASE_URL, parseResponse } from '../config/api';
 
 export default function AnalyticsPage() {
   const [kpi, setKpi] = useState(FALLBACK_KPI);
@@ -15,9 +16,9 @@ export default function AnalyticsPage() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/employees/analytics');
+      const res = await fetch(`${API_BASE_URL}/api/employees/analytics`);
       if (res.ok) {
-        const data = await res.json();
+        const data = await parseResponse(res);
         if (data.kpi) {
           setKpi(data.kpi);
         }

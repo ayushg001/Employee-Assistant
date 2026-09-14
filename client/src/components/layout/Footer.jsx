@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Bot, Heart, Mail, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL, parseResponse } from '../../config/api';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ export default function Footer() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/newsletter/subscribe', {
+      const res = await fetch(`${API_BASE_URL}/api/newsletter/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,7 +24,7 @@ export default function Footer() {
         body: JSON.stringify({ email: email.trim() }),
       });
 
-      const data = await res.json();
+      const data = await parseResponse(res);
 
       if (res.ok) {
         setFeedback({

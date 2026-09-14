@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { INITIAL_EMPLOYEES, DEPARTMENTS } from '../data/mockEmployees';
+import { API_BASE_URL, parseResponse } from '../config/api';
 
 const EmployeeContext = createContext();
 
@@ -13,9 +14,9 @@ export function EmployeeProvider({ children }) {
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/employees');
+      const res = await fetch(`${API_BASE_URL}/api/employees`);
       if (res.ok) {
-        const data = await res.json();
+        const data = await parseResponse(res);
         if (data.employees && data.employees.length > 0) {
           setEmployees(data.employees);
           return;

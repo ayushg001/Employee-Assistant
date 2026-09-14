@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL, parseResponse } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -24,14 +25,14 @@ export function AuthProvider({ children }) {
       }
 
       try {
-        const response = await fetch('/api/auth/profile', {
+        const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         if (response.ok) {
-          const data = await response.json();
+          const data = await parseResponse(response);
           setUser(data.user);
         } else {
           // Token is invalid or expired
@@ -49,7 +50,7 @@ export function AuthProvider({ children }) {
 
   // Login function
   const login = async (email, password) => {
-    const response = await fetch('/api/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await response.json();
+    const data = await parseResponse(response);
 
     if (!response.ok) {
       throw new Error(data.message || 'Login failed');
@@ -71,7 +72,7 @@ export function AuthProvider({ children }) {
 
   // Register function
   const register = async (name, email, password) => {
-    const response = await fetch('/api/auth/register', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,7 +80,7 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ name, email, password }),
     });
 
-    const data = await response.json();
+    const data = await parseResponse(response);
 
     if (!response.ok) {
       throw new Error(data.message || 'Registration failed');

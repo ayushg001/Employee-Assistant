@@ -6,6 +6,7 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import { API_BASE_URL, parseResponse } from '../config/api';
 
 export default function ProfilePage() {
   const { user, token, logout, loading: authLoading } = useAuth();
@@ -22,7 +23,7 @@ export default function ProfilePage() {
       }
 
       try {
-        const res = await fetch('/api/auth/profile', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -32,7 +33,7 @@ export default function ProfilePage() {
           throw new Error('Failed to load profile');
         }
 
-        const data = await res.json();
+        const data = await parseResponse(res);
         setProfileData(data.user);
       } catch (err) {
         setError(err.message || 'Error fetching user profile');

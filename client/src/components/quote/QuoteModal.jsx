@@ -3,6 +3,7 @@ import { CheckCircle2, AlertCircle } from 'lucide-react';
 import Modal from '../common/Modal';
 import Input from '../common/Input';
 import Button from '../common/Button';
+import { API_BASE_URL, parseResponse } from '../../config/api';
 
 export default function QuoteModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -15,18 +16,17 @@ export default function QuoteModal({ isOpen, onClose }) {
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const services = [
     'AI Copilot & Assistant',
-    'Custom Enterprise Dashboard',
-    'Directory & HR Automation',
-    'Analytics & Insights Integration',
-    'Full-Stack Workplace Solutions',
+    'Custom AI Workflows',
+    'Organizational Analytics',
+    'Enterprise Integration',
   ];
 
-  const budgets = [
+  const budgetRanges = [
     '< $1,000',
     '$1,000 - $5,000',
     '$5,000 - $10,000',
@@ -46,7 +46,7 @@ export default function QuoteModal({ isOpen, onClose }) {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/quote', {
+      const res = await fetch(`${API_BASE_URL}/api/quote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function QuoteModal({ isOpen, onClose }) {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      const data = await parseResponse(res);
 
       if (!res.ok) {
         throw new Error(data.message || 'Failed to submit quote request');

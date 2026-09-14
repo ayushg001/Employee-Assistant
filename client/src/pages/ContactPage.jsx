@@ -4,6 +4,7 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
+import { API_BASE_URL, parseResponse } from '../config/api';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ export default function ContactPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ export default function ContactPage() {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      const data = await parseResponse(res);
 
       if (!res.ok) {
         throw new Error(data.message || 'Failed to submit contact message');
