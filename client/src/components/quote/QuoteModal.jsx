@@ -26,7 +26,7 @@ export default function QuoteModal({ isOpen, onClose }) {
     'Enterprise Integration',
   ];
 
-  const budgetRanges = [
+  const budgets = [
     '< $1,000',
     '$1,000 - $5,000',
     '$5,000 - $10,000',
