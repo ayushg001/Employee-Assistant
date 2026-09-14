@@ -9,6 +9,8 @@ import adminRoutes from './routes/adminRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
 import quoteRoutes from './routes/quoteRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger.js';
 
 dotenv.config();
 
@@ -21,6 +23,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Interactive Swagger API Documentation (Bonus Feature)
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/api/contact', contactRoutes);

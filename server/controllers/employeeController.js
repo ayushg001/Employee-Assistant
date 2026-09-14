@@ -38,6 +38,11 @@ export const getEmployees = async (req, res) => {
       query.email = new RegExp(email, 'i');
     }
 
+    // Search by position
+    if (req.query.position) {
+      query.position = new RegExp(req.query.position, 'i');
+    }
+
     // General search across all fields
     if (search) {
       const searchRegex = new RegExp(search, 'i');
@@ -47,6 +52,28 @@ export const getEmployees = async (req, res) => {
         { department: searchRegex },
         { email: searchRegex },
       ];
+    }
+
+    // Pagination (Bonus feature)
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+
+    if (page && limit) {
+      const skip = (page - 1) * limit;
+      const total = await Employee.countDocuments(query);
+      const employees = await Employee.find(query)
+        .sort({ name: 1 })
+        .skip(skip)
+        .limit(limit);
+
+      return res.json({
+        success: true,
+        count: employees.length,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+        employees,
+      });
     }
 
     const employees = await Employee.find(query).sort({ name: 1 });

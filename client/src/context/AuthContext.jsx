@@ -63,7 +63,7 @@ export function AuthProvider({ children }) {
     if (!response.ok || !data || !data.token || !data.user) {
       throw new Error(
         data?.message ||
-          'Backend API is not responding. Please make sure your backend is running and connected.'
+        'Backend API is not responding. Please make sure your backend is running and connected.'
       );
     }
 
@@ -88,7 +88,7 @@ export function AuthProvider({ children }) {
     if (!response.ok || !data || !data.token || !data.user) {
       throw new Error(
         data?.message ||
-          'Backend API is not responding. Please make sure your backend is running and connected.'
+        'Backend API is not responding. Please make sure your backend is running and connected.'
       );
     }
 
