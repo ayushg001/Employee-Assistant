@@ -4,6 +4,7 @@ import { Bot, Moon, Sun, Menu, X, LogOut, ShieldCheck, Sparkles } from 'lucide-r
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
+import { API_BASE_URL } from '../../config/api';
 
 export default function Navbar({ onOpenQuoteModal }) {
   const { isDark, toggleTheme } = useTheme();
@@ -57,6 +58,14 @@ export default function Navbar({ onOpenQuoteModal }) {
             >
               Contact
             </Link>
+            <a
+              href={`${API_BASE_URL || ''}/api/docs`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+            >
+              API Docs
+            </a>
             {isAdmin && (
               <Link
                 to="/admin"

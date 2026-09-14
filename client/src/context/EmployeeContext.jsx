@@ -9,6 +9,7 @@ export function EmployeeProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState('All');
 
   // Fetch employees from MongoDB backend API
   const fetchEmployees = async () => {
@@ -42,6 +43,10 @@ export function EmployeeProvider({ children }) {
         selectedDepartment === 'All' ||
         emp.department?.toLowerCase() === selectedDepartment.toLowerCase();
 
+      const matchesStatus =
+        selectedStatus === 'All' ||
+        emp.status?.toLowerCase() === selectedStatus.toLowerCase();
+
       const query = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !query ||
@@ -50,13 +55,14 @@ export function EmployeeProvider({ children }) {
         emp.department?.toLowerCase().includes(query) ||
         emp.email?.toLowerCase().includes(query);
 
-      return matchesDept && matchesSearch;
+      return matchesDept && matchesStatus && matchesSearch;
     });
-  }, [employees, searchQuery, selectedDepartment]);
+  }, [employees, searchQuery, selectedDepartment, selectedStatus]);
 
   const resetFilters = () => {
     setSearchQuery('');
     setSelectedDepartment('All');
+    setSelectedStatus('All');
   };
 
   return (
@@ -65,10 +71,13 @@ export function EmployeeProvider({ children }) {
         employees,
         filteredEmployees,
         departments: DEPARTMENTS,
+        statuses: ['All', 'Active', 'On Leave', 'Remote', 'Inactive'],
         searchQuery,
         setSearchQuery,
         selectedDepartment,
         setSelectedDepartment,
+        selectedStatus,
+        setSelectedStatus,
         resetFilters,
         loading,
         refreshEmployees: fetchEmployees,
