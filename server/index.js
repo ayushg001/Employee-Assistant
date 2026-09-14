@@ -25,6 +25,9 @@ app.use(cors());
 app.use(express.json());
 
 // Interactive Swagger API Documentation (Bonus Feature)
+app.get('/api/docs.json', (req, res) => {
+  res.json(swaggerSpec);
+});
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
