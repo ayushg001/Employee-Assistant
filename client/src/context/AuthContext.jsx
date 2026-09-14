@@ -60,8 +60,11 @@ export function AuthProvider({ children }) {
 
     const data = await parseResponse(response);
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Login failed');
+    if (!response.ok || !data || !data.token || !data.user) {
+      throw new Error(
+        data?.message ||
+          'Backend API is not responding. Please make sure your backend is running and connected.'
+      );
     }
 
     localStorage.setItem('pulseai_token', data.token);
@@ -82,8 +85,11 @@ export function AuthProvider({ children }) {
 
     const data = await parseResponse(response);
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Registration failed');
+    if (!response.ok || !data || !data.token || !data.user) {
+      throw new Error(
+        data?.message ||
+          'Backend API is not responding. Please make sure your backend is running and connected.'
+      );
     }
 
     localStorage.setItem('pulseai_token', data.token);

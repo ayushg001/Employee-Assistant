@@ -22,7 +22,7 @@ export default function LoginPage() {
     try {
       const user = await login(email, password);
       // Redirect admin to admin panel, otherwise to dashboard
-      if (user.role === 'admin') {
+      if (user?.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
